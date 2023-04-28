@@ -62,6 +62,8 @@ def readconfig():
 def readconfig():
     allowCROS()
     data = request.json
+    if not data:
+        return '0'
     s=json2xml(data).decode("utf-8")
     with open(os.environ['wenda_'+'Config']+"_",'w',encoding = "utf-8") as f:
         f.write(s)
@@ -156,6 +158,8 @@ def api_chat_stream():
 def api_find():
     allowCROS()
     data = request.json
+    if not data:
+        return '0'
     prompt = data.get('prompt')
     step = data.get('step')
     if step is None:
@@ -214,6 +218,8 @@ import re
 def api_chat_stream():
     allowCROS()
     data = request.json
+    if not data:
+        return '0'
     prompt = data.get('prompt')
     max_length = data.get('max_length')
     if max_length is None:
@@ -244,7 +250,7 @@ def api_chat_stream():
         # print(keyword)
         response_d = zhishiku.find(keyword,int(settings.library.Step))
         output_sources = [i['title'] for i in response_d]
-        results = '\n'.join([str(i+1)+". "+re.sub('\n', '', response_d[i]['content']) for i in range(len(response_d))])
+        results = '\n'.join([str(i+1)+". "+re.sub('\n\n', '\n', response_d[i]['content']) for i in range(len(response_d))])
         prompt = 'system: 请扮演一名专业分析师，根据以下内容回答问题：'+prompt + "\n"+ results
         if bool(settings.library.Show_Soucre == 'True'):
             footer = "\n### 来源：\n"+('\n').join(output_sources)+'///'
